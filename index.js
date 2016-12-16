@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 const distanceInWordsToNow = require('date-fns/distance_in_words_to_now');
-const addSeconds = require('date-fns/add_seconds');
+const addMilliseconds = require('date-fns/add_milliseconds');
 const FormData = require('form-data');
 
 const myLat = parseFloat(process.env.LAT);
@@ -23,8 +23,7 @@ function check() {
             let title;
 
             if (r.countdown > 0) {
-                // assuming seconds
-                const arrivingIn = distanceInWordsToNow(addSeconds(new Date(), r.countdown));
+                const arrivingIn = distanceInWordsToNow(addMilliseconds(new Date(), r.countdown));
                 message = `A bot's dropping in ${arrivingIn}.\n`;
                 title = "Snapbot coming";
             }
