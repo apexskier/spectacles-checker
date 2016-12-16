@@ -11,9 +11,9 @@ const PUSH_USER_KEY = process.env.PUSH_USER_KEY;
 function check() {
     return fetch('https://www.spectacles.com/locations')
         .then(r => r.json())
-    // Promise.resolve({
+    // return Promise.resolve({
     //     countdown: 5071,
-    //     coordinates: [47.5, -122.1],
+    //     coordinates: [{lat: 47.5, lng: -122.1}],
     // })
         .then(r => {
             let distance = null;
