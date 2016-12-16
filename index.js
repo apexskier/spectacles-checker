@@ -73,7 +73,7 @@ function checkLoop() {
                 setTimeout(check, time - 120);
                 setTimeout(checkLoop, time + 30);
             } else {
-                setTimeout(checkLoop, 1000 * 60 * 60 * 8);
+                setTimeout(checkLoop, 1000 * 60 * 60 * 4);
             }
         });
 }
