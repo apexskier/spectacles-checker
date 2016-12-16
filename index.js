@@ -18,50 +18,37 @@ function check() {
         .then(r => {
             let distance = null;
             let close = false;
-            let arrivingIn = null;
-
-            const [lat, lng] = r.coordinates
-            if (lat && lng) {
-                distance = latlngDiff([myLat, myLng], [lat, lng]) * 0.000621371;
-
-                if (distance < 40) {
-                    close = true;
-                }
-            }
-
-            if (r.countdown > 0) {
-                // assuming seconds
-                arrivingIn = distanceInWordsToNow(addSeconds(new Date(), r.countdown));
-            }
 
             let message = '';
             let title;
-            if (r.countdown) {
-                message += `A bot's dropping in ${arrivingIn}.`;
+
+            if (r.countdown > 0) {
+                // assuming seconds
+                const arrivingIn = distanceInWordsToNow(addSeconds(new Date(), r.countdown));
+                message = `A bot's dropping in ${arrivingIn}.\n`;
                 title = "Snapbot coming";
-                if (distance) {
-                    message += ' ';
-                }
             }
-            if (distance) {
-                if (close) {
-                    message += `It's close!! 😱`;
-                }
-                message += `A bot dropped ${distance.toFixed(1)} miles away.
-    https://spectacles.com/map`
-                if (close) {
+
+            const distances = r.coordinates.map(({lat, lng}) => latlngDiff([myLat, myLng], [lat, lng]) * 0.000621371);
+            distances.sort((a, b) => a - b);
+            distances.forEach(distance => {
+                if (distance < 40) {
+                    message += `It's close!! 😱 `;
                     title = "🚨 Snapbot landed close";
                 } else {
                     title = "Snapbot landed";
                 }
-            }
+                message += `A bot dropped ${distance.toFixed(1)} miles away.\n`
+            });
 
             if (message) {
+                message += '\nhttps://spectacles.com/map';
+
                 const form = new FormData();
                 form.append('token', PUSH_TOKEN);
                 form.append('user', PUSH_USER_KEY);
                 form.append('message', message);
-                form.append('message', message);
+                form.append('title', title);
                 return fetch('https://api.pushover.net/1/messages.json', {
                     method: 'POST',
                     body: form,
